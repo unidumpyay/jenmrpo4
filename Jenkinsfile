@@ -1,25 +1,39 @@
 pipeline {
     agent any
+
     stages {
         stage('Build') {
             steps {
-                echo 'Сборка приложения...'
+                echo "Сборка приложения..."
+            
             }
         }
         stage('Test') {
             steps {
-                echo 'Тестирование приложения...'
+                echo "Тестирование приложения..."
+           
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Развёртывание приложения...'
+                echo "Развёртывание приложения..."
+    
             }
         }
     }
+
     post {
+
         always {
+            echo "Очистка рабочей области..."
             deleteDir()
+        }
+        success {
+            echo "Сборка прошла успешно!"
+        }
+
+        failure {
+            echo "Сборка завершилась с ошибкой!"
         }
     }
 }
