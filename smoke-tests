@@ -1,5 +1,31 @@
 #!/usr/bin/env bash
 
-echo "Запуск дымового теста..."
-exit 0
+echo "Запуск smoke-тестов..."
 
+# Проверка переменной окружения
+if [ -z "$DB_URL" ]; then
+  echo "Ошибка: переменная DB_URL не установлена!"
+  exit 1
+else
+  echo "DB_URL = $DB_URL"
+fi
+
+# Простая математическая проверка
+expected_sum=15
+actual_sum=$((10 + 5))
+echo "Проверка суммы: 10 + 5 = $actual_sum"
+if [ "$actual_sum" -ne "$expected_sum" ]; then
+  echo "Ошибка: сумма не совпадает!"
+  exit 1
+fi
+
+# Проверка доступности файлов
+for file in deploy smoke-tests; do
+  if [ ! -f "$file" ]; then
+    echo "Ошибка: файл $file не найден!"
+    exit 1
+  fi
+done
+
+echo "Smoke-тесты прошли успешно!"
+exit 0
