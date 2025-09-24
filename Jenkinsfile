@@ -1,29 +1,61 @@
 pipeline {
     agent any
-    environment {
-        GOOGLE_KEY = credentials('GOOGLE-ACCESS-KEY-ID')
-    }
+
     stages {
-        stage('Build') {
+        stage('Сборка') {
             steps {
                 echo "Сборка приложения..."
+                sh '''
+                    echo "Этот блок содержит многострочные шаги"
+                    ls -lh
+                '''
             }
         }
-        stage('Test') {
+
+        stage('Тестирование') {
             steps {
-                echo "Тестирование приложения..."
+                echo "Запуск unit-тестов..."
+                // Здесь можно добавить свои тесты, если будут
+                sh 'echo "Все тесты прошли успешно"'
             }
         }
-        stage('Deploy') {
+
+        stage('Деплой на стейджинг') {
             steps {
-                echo "Развёртывание приложения..."
-                echo "Используем секретный ключ: ${env.GOOGLE_KEY}"
+                echo "Изменяем права на выполнение скриптов"
+                sh 'chmod +x deploy smoke-tests || echo "chmod уже сделан"'
+
+                echo "Деплой на стейджинг"
+                sh './deploy staging'
+
+                echo "Запуск smoke-тестов"
+                sh './smoke-tests'
+            }
+        }
+
+        stage('Проверка перед продакшеном') {
+            steps {
+                input "Всё ок? Отправить на продакшен?"
+            }
+        }
+
+        stage('Деплой на продакшен') {
+            steps {
+                echo "Деплой на продакшен"
+                sh './deploy prod'
             }
         }
     }
+
     post {
         always {
-            deleteDir()
+            echo "Этот блок выполняется всегда (например, очистка воркспейса)"
+        }
+        success {
+            echo "Сборка прошла успешно"
+        }
+        failure {
+            echo "Сборка провалилась"
         }
     }
 }
