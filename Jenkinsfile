@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DB_URL = 'mysql+pymysql://usr:pwd@host:3306/db'
+    }
+
     stages {
         stage('Сборка') {
             steps {
@@ -15,7 +19,6 @@ pipeline {
         stage('Тестирование') {
             steps {
                 echo "Запуск unit-тестов..."
-                // Здесь можно добавить свои тесты, если будут
                 sh 'echo "Все тесты прошли успешно"'
             }
         }
@@ -49,7 +52,7 @@ pipeline {
 
     post {
         always {
-            echo "Этот блок выполняется всегда (например, очистка воркспейса)"
+            echo "Этот блок выполняется всегда хэллоу"
         }
         success {
             echo "Сборка прошла успешно"
